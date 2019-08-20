@@ -12,6 +12,9 @@ urlpatterns = [
     url(r'^',include('apps.contents.urls',namespace ='contents')),
 
     # 配置verifications路由
-    url(r'^',include('apps.verifications.urls')),
+    url(r'^',include('apps.verifications.urls',namespace ='verifications')),
+
+    # 配置oauth路由
+    url(r'^',include('apps.oauth.urls',namespace = 'oauth')),
 
 ]

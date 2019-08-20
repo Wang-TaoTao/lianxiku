@@ -28,7 +28,7 @@
 		<div class="r_con fr">
 			<div class="reg_title clearfix">
 				<h1>用户注册</h1>
-				<a href="../static/login.html">登录</a>
+				<a href="login.html">登录</a>
 			</div>
 			<div class="reg_form clearfix">
 				<form method="post" class="register_form">
@@ -55,17 +55,20 @@
 					</li>
 					<li>
                         <label>图形验证码:</label>
-                        <input v-model = "image_code" @blur="check_image_code"type="text" name="pic_code" id="pic_code" class="msg_input">
-                        <img :src="image_code_url" alt="图形验证码" class="pic_code">
+                        <input v-model = "image_code" @blur="check_image_code"type="text" name="image_code" id="pic_code" class="msg_input">
+                        <img :src="image_code_url" @click = "generate_image_code" alt="图形验证码" class="pic_code">
                         <span v-show="error_image_code"class="error_tip">[[error_image_code_message]]</span>
                     </li>
 
 					<li>
 						<label>短信验证码:</label>
-						<input v-model = "sms_code" @blur ="send_sms_code"type="text" name="msg_code" id="msg_code" class="msg_input">
-						<a href="javascript:;" class="get_msg_code">获取短信验证码</a>
+						<input v-model = "sms_code" @blur ="check_sms_code"type="text" name="msg_code" id="msg_code" class="msg_input">
+						<a @click = "send_sms_code" href="javascript:;" class="get_msg_code">[[ sms_code_tip ]]</a>
 						<span v-show="error_sms_code"class="error_tip">[[error_sms_code_message]]</span>
-					</li>
+					    {% if sms_code_errmsg %}
+                        <span class="error_tip">{{ sms_code_errmsg }} </span>
+                        {% endif %}
+                    </li>
 					<li class="agreement">
 						<input v-model = "allow" @blur="check_allow"type="checkbox" name="allow" id="allow" checked="checked">
 						<label>同意”美多商城用户使用协议“</label>
