@@ -15,17 +15,17 @@
 		<div class="header">
 			<div class="welcome fl">欢迎来到美多商城!</div>
 			<div class="fr">
-				<div class="login_info fl">
-					欢迎您：<em>张 山</em>
+				<div v-if ="username"class="login_info fl">
+					欢迎您：<em>[[username]]</em>
 				</div>
-				<div class="login_btn fl">
-					<a href="login.html">登录</a>
+				<div v-else class="login_btn fl">
+					<a href="/login/">登录</a>
 					<span>|</span>
-					<a href="register.html">注册</a>
+					<a href="/register/">注册</a>
 				</div>
 				<div class="user_link fl">
 					<span>|</span>
-					<a href="user_center_info.html">用户中心</a>
+					<a href="/info/">用户中心</a>
 					<span>|</span>
 					<a href="../static/cart.html">我的购物车</a>
 					<span>|</span>
@@ -57,8 +57,8 @@
 			<ul>
 				<li><a href="user_center_info.html" class="active">· 个人信息</a></li>
 				<li><a href="../static/user_center_order.html">· 全部订单</a></li>
-				<li><a href="../static/user_center_site.html">· 收货地址</a></li>
-				<li><a href="../static/user_center_pass.html">· 修改密码</a></li>
+				<li><a href="/address/">· 收货地址</a></li>
+				<li><a href="user_center_pass.html">· 修改密码</a></li>
 			</ul>
 		</div>
 		<div class="right_content clearfix">

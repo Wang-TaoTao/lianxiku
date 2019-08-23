@@ -17,4 +17,7 @@ urlpatterns = [
     # 配置oauth路由
     url(r'^',include('apps.oauth.urls',namespace = 'oauth')),
 
+    # 配置areas路由
+    url(r'^',include('apps.areas.urls',namespace = 'areas')),
+
 ]

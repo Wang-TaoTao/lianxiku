@@ -8,10 +8,50 @@ from django.urls import reverse
 from django.views import View
 from itsdangerous import BadData
 from pymysql import DatabaseError
-from apps.users.models import User
+from apps.users.models import User, Address
 from meiduo_lianxi.settings.dev import logger
 from utils.response_code import RETCODE
 from django.contrib.auth.mixins import LoginRequiredMixin
+
+
+
+
+# 展示收货地址
+class AddressView(LoginRequiredMixin,View):
+
+    def get(self,request):
+
+        # 获取用户列表
+        login_user = request.user
+        addresses = Address.objects.filter(user=login_user)
+
+        address_dict_list = []
+
+        for address in addresses:
+            address_dict_list.append({
+                "id": address.id,
+                "title": address.title,
+                "receiver": address.receiver,
+                "province": address.province.name,
+                "city": address.city.name,
+                "district": address.district.name,
+                "place": address.place,
+                "mobile": address.mobile,
+                "tel": address.tel,
+                "email": address.email
+
+            })
+
+        context = {
+            'default_address_id':login_user.default_address_id,
+            'addresses':address_dict_list,
+        }
+
+
+
+        return render(request,'user_center_site.html',context)
+
+
 
 
 # 验证链接提取user信息

@@ -46,6 +46,10 @@ INSTALLED_APPS = [
     'apps.verifications',
     # 注册oauth子应用
     'apps.oauth',
+    # 注册areas子应用
+    'apps.areas',
+    # 注册goods子应用
+    'apps.goods',
 ]
 
 MIDDLEWARE = [
@@ -270,3 +274,11 @@ EMAIL_ACTIVE_URL = 'http://www.meiduo.site:8000/emails/verification/' #激活地
 QQ_CLIENT_ID = '101518219'
 QQ_CLIENT_SECRET = '418d84ebdc7241efb79536886ae95224'
 QQ_REDIRECT_URI = 'http://www.meiduo.site:8000/oauth_callback'
+
+
+# 指定自定义的Django文件存储类
+DEFAULT_FILE_STORAGE = 'utils.fastdfs.fastdfs_storage.FastDFSStorage'
+
+# FastDFS相关参数
+# FDFS_BASE_URL = 'http://192.168.103.158:8888/'
+FDFS_BASE_URL = 'http://image.meiduo.site:8888/'
