@@ -8,6 +8,8 @@ from django.urls import reverse
 from django.views import View
 from itsdangerous import BadData
 from pymysql import DatabaseError
+
+from apps.carts.utils import merge_cart_cookie_to_redis
 from apps.users.models import User, Address
 from meiduo_lianxi.settings.dev import logger
 from utils.response_code import RETCODE
@@ -148,8 +150,6 @@ class EmailView(LoginRequiredMixin,View):
 
 
 
-
-
 # 个人中心
 class UserInfoView(LoginRequiredMixin,View):
 
@@ -236,6 +236,10 @@ class LoginView(View):
             response = redirect(next)
         else:
             response = redirect(reverse('contents:index'))
+
+
+        # 合并购物车功能
+        response = merge_cart_cookie_to_redis(request,user,response)
 
         # 登录时用户名写入到cookie，有效期15天
         response.set_cookie('username', user.username, max_age=3600 * 24 * 15)

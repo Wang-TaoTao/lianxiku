@@ -32,4 +32,6 @@ urlpatterns = [
     # 展示收货地址
     url(r'^address/$',views.AddressView.as_view()),
 
+
+
 ]

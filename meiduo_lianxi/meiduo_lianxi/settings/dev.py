@@ -50,6 +50,12 @@ INSTALLED_APPS = [
     'apps.areas',
     # 注册goods子应用
     'apps.goods',
+    # 注册carts子应用
+    'apps.carts',
+
+
+    # 注册第三方Haystack
+    'haystack',  # 全文检索
 ]
 
 MIDDLEWARE = [
@@ -197,7 +203,22 @@ CACHES = {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
     },
-}
+    "history": { # 用户浏览记录 --12号库
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/12",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
+    "carts": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/13",
+        "OPTIONS": {
+        "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
+ }
+
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "session"
 
@@ -270,15 +291,33 @@ EMAIL_FROM = '美多商城<hmmeiduo@163.com>' # 发件人抬头
 EMAIL_ACTIVE_URL = 'http://www.meiduo.site:8000/emails/verification/' #激活地址
 
 
+
 # qq登录参数
 QQ_CLIENT_ID = '101518219'
 QQ_CLIENT_SECRET = '418d84ebdc7241efb79536886ae95224'
 QQ_REDIRECT_URI = 'http://www.meiduo.site:8000/oauth_callback'
 
 
+
 # 指定自定义的Django文件存储类
 DEFAULT_FILE_STORAGE = 'utils.fastdfs.fastdfs_storage.FastDFSStorage'
+
 
 # FastDFS相关参数
 # FDFS_BASE_URL = 'http://192.168.103.158:8888/'
 FDFS_BASE_URL = 'http://image.meiduo.site:8888/'
+
+
+
+# Haystack
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
+        'URL': 'http://192.168.130.128:9200/', # Elasticsearch服务器ip地址，端口号固定为9200
+        'INDEX_NAME': 'meiduo', # Elasticsearch建立的索引库的名称
+    },
+}
+
+
+# 当添加、修改、删除数据时，自动生成索引
+HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'

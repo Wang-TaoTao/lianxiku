@@ -5,8 +5,9 @@
 	<title>美多商城-首页</title>
 	<link rel="stylesheet" type="text/css" href="../static/css/reset.css">
 	<link rel="stylesheet" type="text/css" href="../static/css/main.css">
+
+    <script type="text/javascript" src="../static/js/common.js"></script>
     <script type="text/javascript" src="../static/js/host.js"></script>
-	<script type="text/javascript" src="../static/js/common.js"></script>
 	<script type="text/javascript" src="../static/js/vue-2.5.16.js"></script>
     <script type="text/javascript" src="../static/js/axios-0.18.0.min.js"></script>
 	<script type="text/javascript" src="../static/js/jquery-1.12.4.min.js"></script>
@@ -24,13 +25,13 @@
 				<div v-else class="login_btn fl">
 					<a href="/login/">登录</a>
 					<span>|</span>
-					<a href="register.html">注册</a>
+					<a href="/register/">注册</a>
 				</div>
 				<div class="user_link fl">
 					<span>|</span>
 					<a href="/info/">用户中心</a>
 					<span>|</span>
-					<a href="../static/cart.html">我的购物车</a>
+					<a href="cart.html">我的购物车</a>
 					<span>|</span>
 					<a href="../static/user_center_order.html">我的订单</a>
 				</div>
@@ -80,223 +81,237 @@
 	</div>
 
 	<div class="pos_center_con clearfix">
-{#        轮播图 广告 #}
 		<ul class="slide">
             {% for lbt in contents.index_lbt %}
-{#			<li><a href="{{ lbt.url }}"><img src="http://192.168.90.172:8888/{{ lbt.image }}" alt="{{ lbt.title }}"></a></li>#}
-                <li><a href="{{ lbt.url }}"><img src="{{ lbt.image.url }}" alt="{{ lbt.title }}"></a></li>
-
-            {% endfor %}
+			<li><a href="#"><img src="{{ lbt.image.url }}" alt="{{ lbt.title }}"></a></li>
+		    {% endfor %}
 		</ul>
 		<div class="prev"></div>
 		<div class="next"></div>
 		<ul class="points">
 		</ul>
-{#            商品分类  #}
-            <ul class="sub_menu">
-                {% for group in categories.values() %}
-                    <li>
-                        <div class="level1">
-                            {% for chanel in group.channels %}
-                                <a href="{{ chanel.url }}">{{ chanel.name }}</a>
-                            {% endfor %}
-                        </div>
-                        <div class="level2">
-                            {% for cat2 in group.sub_cats %}
-                            <div class="list_group">
-
-                                <div class="group_name fl">{{ cat2.name }}&gt;</div>
-                                <div class="group_detail fl">
-                                    {% for cat3 in cat2.sub_cats %}
-                                     <a href="/list/{{ cat3.id }}/1">{{ cat3.name }}</a>
-                                    {% endfor %}
-                                </div>
-
-                            </div>
-                            {% endfor %}
+		<ul class="sub_menu">
 
 
-                        </div>
-                    </li>
-                {% endfor %}
-            </ul>
-        <div class="news">
-            <div class="news_title">
-                <h3>快讯</h3>
-                <a href="#">更多 &gt;</a>
-            </div>
-            <ul class="news_list">
-                {% for content in contents.index_kx %}
-                    <li><a href="{{ content.url }}">{{ content.title }}</a></li>
-                {% endfor %}
-            </ul>
-            {% for content in contents.index_ytgg %}
-                <a href="{{ content.url }}" class="advs"><img src="{{ content.image.url }}"></a>
-            {% endfor %}
-        </div>
-    </div>
+            {% for group in categories.values() %}
+			<li>
+				<div class="level1">
+                    {% for channel in group.channels %}
+					<a href="{{ channel.url }}">{{ channel.name }}</a>
+                    {% endfor %}
+				</div>
+				<div class="level2">
+                    {% for cat2 in group.sub_cats %}
+					<div class="list_group">
+						<div class="group_name fl">{{ cat2.name }} &gt;</div>
 
-    <div class="list_model">
-        <div class="list_title clearfix">
-            <h3 class="fl" id="model01">1F 手机通讯</h3>
-            <div class="subtitle fr">
-                <a @mouseenter="f1_tab=1" :class="f1_tab===1?'active':''">时尚新品</a>
-                <a @mouseenter="f1_tab=2" :class="f1_tab===2?'active':''">畅想低价</a>
-                <a @mouseenter="f1_tab=3" :class="f1_tab===3?'active':''">手机配件</a>
-            </div>
-        </div>
-        <div class="goods_con clearfix">
-            <div class="goods_banner fl">
-                <img src="{{ contents.index_1f_logo.0.image.url }}">
-                <div class="channel">
-                    {% for content in contents.index_1f_pd %}
-                        <a href="{{ content.url }}">{{ content.title }}</a>
-                    {% endfor %}
-                </div>
-                <div class="key_words">
-                    {% for content in contents.index_1f_bq %}
-                        <a href="{{ content.url }}">{{ content.title }}</a>
-                    {% endfor %}
-                </div>
-            </div>
-            <div class="goods_list_con">
-                <ul v-show="f1_tab===1" class="goods_list fl">
-                    {% for content in contents.index_1f_ssxp %}
-                        <li>
-                            <a href="{{ content.url }}" class="goods_pic"><img src="{{ content.image.url }}"></a>
-                            <h4><a href="{{ content.url }}" title="{{ content.title }}">{{ content.title }}</a></h4>
-                            <div class="price">{{ content.text }}</div>
-                        </li>
-                    {% endfor %}
-                </ul>
-                <ul v-show="f1_tab===2" class="goods_list fl">
-                    {% for content in contents.index_1f_cxdj %}
-                        <li>
-                            <a href="{{ content.url }}" class="goods_pic"><img src="{{ content.image.url }}"></a>
-                            <h4><a href="{{ content.url }}" title="{{ content.title }}">{{ content.title }}</a></h4>
-                            <div class="price">{{ content.text }}</div>
-                        </li>
-                    {% endfor %}
-                </ul>
-                <ul v-show="f1_tab===3" class="goods_list fl">
-                    {% for content in contents.index_1f_sjpj %}
-                        <li>
-                            <a href="{{ content.url }}" class="goods_pic"><img src="{{ content.image.url }}"></a>
-                            <h4><a href="{{ content.url }}" title="{{ content.title }}">{{ content.title }}</a></h4>
-                            <div class="price">{{ content.text }}</div>
-                        </li>
-                    {% endfor %}
-                </ul>
-            </div>
-        </div>
-    </div>
+						<div class="group_detail fl">
+                        {% for cat3 in cat2.sub_cats %}
+							<a href="/list/{{ cat3.id }}/1">{{ cat3.name }}</a>
 
-    <div class="list_model model02">
-        <div class="list_title clearfix">
-            <h3 class="fl" id="model01">2F 电脑数码</h3>
-            <div class="subtitle fr">
-                <a @mouseenter="f2_tab=1" :class="f2_tab===1?'active':''">加价换购</a>
-                <a @mouseenter="f2_tab=2" :class="f2_tab===2?'active':''">畅享低价</a>
-            </div>
-        </div>
-        <div class="goods_con clearfix">
-            <div class="goods_banner fl">
-                <img src="{{ contents.index_2f_logo.0.image.url }}">
-                <div class="channel">
-                    {% for content in contents.index_2f_pd %}
-                        <a href="{{ content.url }}">{{ content.title }}</a>
-                    {% endfor %}
-                </div>
-                <div class="key_words">
-                    {% for content in contents.index_2f_bq %}
-                        <a href="{{ content.url }}">{{ content.title }}</a>
-                    {% endfor %}
-                </div>
-            </div>
-            <div class="goods_list_con">
-                <ul v-show="f2_tab===1" class="goods_list fl">
-                    {% for content in contents.index_2f_cxdj %}
-                        <li>
-                            <a href="{{ content.url }}" class="goods_pic"><img src="{{ content.image.url }}"></a>
-                            <h4><a href="{{ content.url }}" title="{{ content.title }}">{{ content.title }}</a></h4>
-                            <div class="price">{{ content.text }}</div>
-                        </li>
-                    {% endfor %}
-                </ul>
-                <ul v-show="f2_tab===2" class="goods_list fl">
-                    {% for content in contents.index_2f_jjhg %}
-                        <li>
-                            <a href="{{ content.url }}" class="goods_pic"><img src="{{ content.image.url }}"></a>
-                            <h4><a href="{{ content.url }}" title="{{ content.title }}">{{ content.title }}</a></h4>
-                            <div class="price">{{ content.text }}</div>
-                        </li>
-                    {% endfor %}
-                </ul>
-            </div>
-        </div>
-    </div>
+							{% endfor %}
 
-    <div class="list_model model03">
-        <div class="list_title clearfix">
-            <h3 class="fl" id="model01">3F 家居家装</h3>
-            <div class="subtitle fr">
-                <a @mouseenter="f3_tab=1" :class="f3_tab===1?'active':''">生活用品</a>
-                <a @mouseenter="f3_tab=2" :class="f3_tab===2?'active':''">厨房用品</a>
-            </div>
-        </div>
-        <div class="goods_con clearfix">
-            <div class="goods_banner fl">
-                <img src="{{ contents.index_3f_logo.0.image.url }}">
-                <div class="channel">
-                    {% for content in contents.index_3f_pd %}
-                        <a href="{{ content.url }}">{{ content.title }}</a>
-                    {% endfor %}
-                </div>
-                <div class="key_words">
-                    {% for content in contents.index_3f_bq %}
-                        <a href="{{ content.url }}">{{ content.title }}</a>
-                    {% endfor %}
-                </div>
-            </div>
-            <div class="goods_list_con">
-                <ul v-show="f3_tab===1" class="goods_list fl">
-                    {% for content in contents.index_3f_shyp %}
-                        <li>
-                            <a href="{{ content.url }}" class="goods_pic"><img src="{{ content.image.url }}"></a>
-                            <h4><a href="{{ content.url }}" title="{{ content.title }}">{{ content.title }}</a></h4>
-                            <div class="price">{{ content.text }}</div>
-                        </li>
-                    {% endfor %}
-                </ul>
-                <ul v-show="f3_tab===2" class="goods_list fl">
-                    {% for content in contents.index_3f_cfyp %}
-                        <li>
-                            <a href="{{ content.url }}" class="goods_pic"><img src="{{ content.image.url }}"></a>
-                            <h4><a href="{{ content.url }}" title="{{ content.title }}">{{ content.title }}</a></h4>
-                            <div class="price">{{ content.text }}</div>
-                        </li>
-                    {% endfor %}
-                </ul>
-            </div>
-        </div>
-    </div>
+						</div>
+					</div>
+                        {% endfor %}
+				</div>
+			</li>
+			{% endfor %}
+		</ul>
 
-    <div class="footer">
-        <div class="foot_link">
-            <a href="#">关于我们</a>
-            <span>|</span>
-            <a href="#">联系我们</a>
-            <span>|</span>
-            <a href="#">招聘人才</a>
-            <span>|</span>
-            <a href="#">友情链接</a>
-        </div>
-        <p>CopyRight © 2016 北京美多商业股份有限公司 All Rights Reserved</p>
-        <p>电话：010-****888 京ICP备*******8号</p>
-    </div>
-</div>
-<script type="text/javascript" src="../static/js/slide.js"></script>
-<script type="text/javascript" src="../static/js/common.js"></script>
-<script type="text/javascript" src="../static/js/index.js"></script>
+		<div class="news">
+			<div class="news_title">
+				<h3>快讯</h3>
+				<a href="#">更多 &gt;</a>
+			</div>
+			<ul class="news_list">
+
+                {% for kx in contents.index_kx %}
+				<li><a href="#">{{ kx.title }}</a></li>
+				{% endfor %}
+
+			</ul>
+
+            {% for yt in contents.index_ytgg %}
+			<a href="#" class="advs"><img src="{{ yt.image.url }}"></a>
+	        {% endfor %}
+
+			</div>
+	</div>
+
+	<div class="list_model">
+		<div class="list_title clearfix">
+			<h3 class="fl" id="model01">1F 手机通讯</h3>
+			<div class="subtitle fr">
+				<a href="javascript:;" @mouseenter="f1_tab=1" :class="f1_tab===1?'active':''">时尚新品</a>
+				<a href="javascript:;" @mouseenter="f1_tab=2" :class="f1_tab===2?'active':''">畅想低价</a>
+				<a href="javascript:;" @mouseenter="f1_tab=3" :class="f1_tab===3?'active':''">手机配件</a>
+			</div>
+		</div>
+		<div class="goods_con clearfix">
+			<div class="goods_banner fl">
+
+				<img src="{{ contents.index_1f_logo[0].image.url }}">
+
+
+				<div class="channel">
+                    {% for pd in contents.index_1f_pd %}
+					<a href="#">{{ pd.title }}</a>
+					{% endfor %}
+				</div>
+
+				<div class="key_words">
+                    {% for bq in contents.index_1f_bq %}
+					<a href="#">荣耀手机</a>
+                    {% endfor %}
+
+				</div>
+			</div>
+			<div class="goods_list_con">
+
+				<ul class="goods_list fl" v-show="f1_tab===1">
+                    {% for ssxp in contents.index_1f_ssxp %}
+					<li>					
+						<a href="http://itcast.cn/" class="goods_pic"><img src="{{ ssxp.image.url }}"></a>
+						<h4><a href="#" title="{{ ssxp.title }}">{{ ssxp.title }}</a></h4>
+						<div class="price">{{ ssxp.text }}</div>
+					</li>
+                    {% endfor %}
+				</ul>
+				<ul class="goods_list fl" v-show="f1_tab===2">
+                    {% for cxdj in contents.index_1f_cxdj %}
+					<li>					
+						<a href="#" class="goods_pic"><img src="{{ cxdj.image.url }}"></a>
+						<h4><a href="#">{{ cxdj.title }}</a></h4>
+						<div class="price">{{ cxdj.text }}</div>
+					</li>
+                    {% endfor %}
+
+				</ul>
+				<ul class="goods_list fl" v-show="f1_tab===3">
+                    {% for sjpj in contents.index_1f_sjpj %}
+					<li>					
+						<a href="#" class="goods_pic"><img src="{{ sjpj.image.url }}"></a>
+						<h4><a href="#">{{ sjpj.title }}</a></h4>
+						<div class="price">{{ sjpj.text }}</div>
+					</li>
+					{% endfor %}
+				</ul>
+
+            </div>
+		</div>
+	</div>
+
+	<div class="list_model model02">
+		<div class="list_title clearfix">
+			<h3 class="fl" id="model01">2F 电脑数码</h3>
+			<div class="subtitle fr">
+			<a href="javascript:;" @mouseenter="f2_tab=1" :class="f2_tab===1?'active':''">畅享低价</a>
+            <a href="javascript:;" @mouseenter="f2_tab=2" :class="f2_tab===2?'active':''">加价换购</a>
+			</div>
+		</div>
+		<div class="goods_con clearfix">
+			<div class="goods_banner fl">
+
+				<img src="{{ contents.index_2f_logo[0].image.url }}">
+				<div class="channel">
+                    {% for pd in contents.index_2f_pd %}
+					<a href="#">电脑</a>
+                    {% endfor %}
+
+				</div>
+				<div class="key_words">
+                    {% for bq in contents.index_2f_bq %}
+					<a href="#">Apple</a>
+				    {% endfor %}
+				</div>
+			</div>
+			<div class="goods_list_con">
+				<ul class="goods_list fl" v-show="f2_tab===1">
+                    {% for jjhg in contents.index_2f_jjhg %}
+					<li>					
+						<a href="#" class="goods_pic"><img src="{{ jjhg.image.url }}"></a>
+						<h4><a href="#" title="{{ jjhg.title }}">{{ jjhg.title }}</a></h4>
+						<div class="price">{{ jjhg.text }}</div>
+					</li>
+					{% endfor %}
+				</ul>
+				
+				<ul class="goods_list fl" v-show="f2_tab===2">
+                    {% for cxdj in contents.index_2f_cxdj %}
+					<li>					
+						<a href="#" class="goods_pic"><img src="{{ cxdj.image.url }}"></a>
+						<h4><a href="#" title="{{ cxdj.title }}">{{ cxdj.title }}</a></h4>
+						<div class="price">{{ cxdj.text }}</div>
+					</li>
+					{% endfor %}
+				</ul>
+			</div>
+		</div>
+	</div>
+	
+	<div class="list_model model03">
+		<div class="list_title clearfix">
+			<h3 class="fl" id="model01">3F 家居家装</h3>
+			<div class="subtitle fr">
+				<a href="javascript:;" @mouseenter="f3_tab=1" :class="f3_tab===1?'active':''">生活用品</a>
+                <a href="javascript:;" @mouseenter="f3_tab=2" :class="f3_tab===2?'active':''">厨房用品</a>
+			</div>
+		</div>
+		<div class="goods_con clearfix">
+			<div class="goods_banner fl">
+				<img src="{{ contents.index_3f_logo[0].image.url }}">
+				<div class="channel">
+                    {% for pd in contents.index_3f_pd %}
+					<a href="#">家居日用</a>
+					{% endfor %}
+				</div>
+				<div class="key_words">
+                    {% for bq in contents.index_3f_bq %}
+					<a href="#">厨具餐饮</a>
+					{% endfor %}
+				</div>
+			</div>
+			<div class="goods_list_con">
+				<ul class="goods_list fl" v-show="f3_tab===1">
+                    {% for shyp in contents.index_3f_shyp %}
+					<li>					
+						<a href="#" class="goods_pic"><img src="{{ shyp.image.url }}"></a>
+						<h4><a href="#" title="{{ shyp.title }}">{{ shyp.title }}</a></h4>
+						<div class="price">{{ shyp.text }}</div>
+					</li>
+                    {% endfor %}
+
+				</ul>
+				<ul class="goods_list fl" v-show="f3_tab===2">
+                    {% for cfyp in contents.index_3f_cfyp %}
+					<li>					
+						<a href="#" class="goods_pic"><img src="{{ cfyp.image.url }}"></a>
+						<h4><a href="#" title="{{ cfyp.title }}">{{ cfyp.title }}</a></h4>
+						<div class="price">{{ cfyp.text }}</div>
+					</li>
+					{% endfor %}
+				</ul>
+			</div>
+		</div>
+	</div>
+
+	<div class="footer">
+		<div class="foot_link">
+			<a href="#">关于我们</a>
+			<span>|</span>
+			<a href="#">联系我们</a>
+			<span>|</span>
+			<a href="#">招聘人才</a>
+			<span>|</span>
+			<a href="#">友情链接</a>		
+		</div>
+		<p>CopyRight © 2016 北京美多商业股份有限公司 All Rights Reserved</p>
+		<p>电话：010-****888    京ICP备*******8号</p>
+	</div>
+	</div>
+	<script type="text/javascript" src="../static/js/slide.js"></script>
+	<script type="text/javascript" src="../static/js/index.js"></script>
+	<script type="text/javascript" src="../static/js/common.js"></script>
 </body>
 </html>

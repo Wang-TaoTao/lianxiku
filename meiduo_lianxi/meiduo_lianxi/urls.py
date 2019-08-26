@@ -20,4 +20,13 @@ urlpatterns = [
     # 配置areas路由
     url(r'^',include('apps.areas.urls',namespace = 'areas')),
 
+    # 配置goods路由
+    url(r'^',include('apps.goods.urls',namespace = 'goods')),
+
+    # 配置carts路由
+    url(r'^',include('apps.carts.urls',namespace= 'carts')),
+
+    # 配置第三方Haystack路由
+    url(r'^search/', include('haystack.urls')),
+
 ]

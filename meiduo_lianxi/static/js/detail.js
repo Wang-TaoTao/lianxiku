@@ -1,21 +1,22 @@
-var vm = new Vue({
+let vm = new Vue({
     el: '#app',
-    // 修改Vue变量的读取语法，避免和django模板语法冲突
     delimiters: ['[[', ']]'],
     data: {
-        host,
-        hots: [],
-        sku_id: sku_id,
-        sku_count: 1,
-        sku_price: price,
-        sku_amount: 0,
+        username: getCookie('username'),
+        hot_skus: [],
         category_id: category_id,
+		sku_id: sku_id,
+        sku_price: sku_price,
+        sku_count: 1,
+        sku_amount: 0,
         tab_content: {
-            detail: true,
+		    detail: true,
             pack: false,
             comment: false,
             service: false
         },
+        cart_total_count: 0,
+        carts: [],
         comments: [],
         score_classes: {
             1: 'stars_one',
@@ -24,27 +25,18 @@ var vm = new Vue({
             4: 'stars_four',
             5: 'stars_five',
         },
-        cart_total_count: 0, // 购物车总数量
-        carts: [], // 购物车数据,
-        username: '',
     },
     mounted(){
-        // 获取热销商品数据
-        this.get_hot_goods();
-
+		// 获取热销商品数据
+        this.get_hot_skus();
+        // 记录分类商品的访问量
+		this.goods_visit_count();
         // 保存用户浏览记录
-        this.save_browse_histories();
-
-        // 记录商品详情的访问量
-        this.detail_visit();
-
-        // 获取购物车数据
+		this.save_browse_histories();
+		// 获取简单购物车数据
         this.get_carts();
-
-        // 获取商品评价信息
+		// 获取商品评价信息
         this.get_goods_comment();
-
-        this.username = getCookie('username');
     },
     watch: {
         // 监听商品数量的变化
@@ -64,14 +56,12 @@ var vm = new Vue({
                 this.sku_count = 5;
                 alert('超过商品数量上限');
             }
-            // this.sku_amount = (this.sku_count * this.sku_price).toFixed(2);
         },
         // 减数量
         on_minus(){
             if (this.sku_count > 1) {
                 this.sku_count--;
             }
-            // this.sku_amount = (this.sku_count * this.sku_price).toFixed(2);
         },
         // 编辑商品数量
         check_sku_count(){
@@ -81,7 +71,6 @@ var vm = new Vue({
             if (this.sku_count < 1) {
                 this.sku_count = 1;
             }
-            // this.sku_amount = (this.sku_count * this.sku_price).toFixed(2);
         },
         // 控制页面标签页展示
         on_tab_content(name){
@@ -93,69 +82,71 @@ var vm = new Vue({
             };
             this.tab_content[name] = true;
         },
-        // 获取热销商品数据
-        get_hot_goods(){
-            var url = this.hots + '/hot/' + this.category_id + '/';
-            axios.get(url, {
-                responseType: 'json'
-            })
-                .then(response => {
-                    this.hots = response.data.hot_skus;
-                    for (var i = 0; i < this.hots.length; i++) {
-                        this.hots[i].url = '/goods/' + this.hots[i].id + '.html';
-                    }
+    	// 获取热销商品数据
+        get_hot_skus(){
+            if (this.category_id) {
+                let url = '/hot/'+ this.category_id +'/';
+                axios.get(url, {
+                    responseType: 'json'
                 })
-                .catch(error => {
-                    console.log(error.response);
-                })
+                    .then(response => {
+                        this.hot_skus = response.data.hot_skus;
+                        for(let i=0; i<this.hot_skus.length; i++){
+                            this.hot_skus[i].url = '/detail/' + this.hot_skus[i].id + '/';
+                        }
+                    })
+                    .catch(error => {
+                        console.log(error.response);
+                    })
+            }
         },
-        // 保存用户浏览记录
-        save_browse_histories(){
-            if (this.sku_id) {
-                var url = this.hots + '/browse_histories/';
-                axios.post(url, {
-                    'sku_id': this.sku_id
+        // 记录分类商品的访问量
+		goods_visit_count(){
+        	if (this.category_id) {
+        		let url = '/detail/visit/' + this.category_id + '/';
+				axios.post(url, {}, {
+                    headers: {
+                        'X-CSRFToken':getCookie('csrftoken')
+                    },
+                    responseType: 'json'
+                })
+					.then(response => {
+						console.log(response.data);
+					})
+					.catch(error => {
+						console.log(error.response);
+					});
+			}
+		},
+		// 保存用户浏览记录
+		save_browse_histories(){
+        	if (this.sku_id) {
+        		let url = '/browse_histories/';
+				axios.post(url, {
+                    'sku_id':this.sku_id
                 }, {
                     headers: {
-                        'X-CSRFToken': getCookie('csrftoken')
+                        'X-CSRFToken':getCookie('csrftoken')
                     },
                     responseType: 'json'
                 })
-                    .then(response => {
-                        console.log(response.data);
-                    })
-                    .catch(error => {
-                        console.log(error.response);
-                    });
-            }
-        },
-        // 记录商品详情的访问量
-        detail_visit(){
-            if (this.category_id) {
-                var url = this.hots + '/detail/visit/' + this.category_id + '/';
-                axios.post(url, {}, {
-                    headers: {
-                        'X-CSRFToken': getCookie('csrftoken')
-                    },
-                    responseType: 'json'
-                })
-                    .then(response => {
-                        console.log(response.data);
-                    })
-                    .catch(error => {
-                        console.log(error.response);
-                    });
-            }
-        },
+					.then(response => {
+						console.log(response.data);
+					})
+					.catch(error => {
+						console.log(error.response);
+					});
+			}
+		},
         // 加入购物车
-        add_cart(){
-            var url = this.host + '/carts/';
+        add_carts(){
+            let url = '/carts/';
             axios.post(url, {
                 sku_id: parseInt(this.sku_id),
                 count: this.sku_count
             }, {
                 headers: {
-                    'X-CSRFToken': getCookie('csrftoken')
+                    'X-CSRFToken':getCookie('csrftoken')
                 },
                 responseType: 'json',
                 withCredentials: true
@@ -172,17 +163,17 @@ var vm = new Vue({
                     console.log(error.response);
                 })
         },
-        // 获取购物车数据
+        // 获取简单购物车数据
         get_carts(){
-            var url = this.host + '/carts/simple/';
+        	let url = '/carts/simple/';
             axios.get(url, {
                 responseType: 'json',
             })
                 .then(response => {
                     this.carts = response.data.cart_skus;
                     this.cart_total_count = 0;
-                    for (var i = 0; i < this.carts.length; i++) {
-                        if (this.carts[i].name.length > 25) {
+                    for(let i=0;i<this.carts.length;i++){
+                        if (this.carts[i].name.length>25){
                             this.carts[i].name = this.carts[i].name.substring(0, 25) + '...';
                         }
                         this.cart_total_count += this.carts[i].count;
@@ -195,13 +186,13 @@ var vm = new Vue({
         // 获取商品评价信息
         get_goods_comment(){
             if (this.sku_id) {
-                var url = this.hots + '/comment/' + this.sku_id + '/';
+                let url = '/comments/'+ this.sku_id +'/';
                 axios.get(url, {
                     responseType: 'json'
                 })
                     .then(response => {
-                        this.comments = response.data.goods_comment_list;
-                        for (var i = 0; i < this.comments.length; i++) {
+                        this.comments = response.data.comment_list;
+                        for(let i=0; i<this.comments.length; i++){
                             this.comments[i].score_class = this.score_classes[this.comments[i].score];
                         }
                     })
