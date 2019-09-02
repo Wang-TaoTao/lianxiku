@@ -1,25 +1,158 @@
+import json
 import re
+from random import randint
 
 from QQLoginTool.QQtool import OAuthQQ
 from django import http
 from django.conf import settings
 from django.contrib.auth import login
 from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.views import View
 from django_redis import get_redis_connection
 from pymysql import DatabaseError
+from redis.utils import pipeline
 
-from apps.oauth.models import OAuthQQUser
+from apps.oauth.models import OAuthQQUser, OAuthSinaUser
 from apps.users.models import User
 from meiduo_lianxi.settings.dev import logger
 from utils.response_code import RETCODE
+from utils.secret import SecretOauth
+from libs.sina import sinaweibobopy3
+
+
+
+
+# 用户登录微博后的回调处理
+class WeiboAuthCallBackView(View):
+
+    def get(self,request):
+
+        # 接收参数
+        code = request.GET.get('code')
+
+        if not code:
+            return
+
+        # 创建微博对象
+        sina = sinaweibobopy3.APIClient(app_key=settings.APP_KEY,app_secret=settings.APP_SECRET,redirect_uri=settings.REDIRECT_URL)
+
+        # 1.根据code 向微博服务器 获取access_token
+        result = sina.request_access_token(code)
+
+        # 2.根据access_token 获取openid
+        sina.set_access_token(result.access_token, result.expires_in)
+        openid = result.uid
+
+
+        #　判断是否是初次授权
+        try:
+            qquser = OAuthSinaUser.objects.get(uid=openid)
+        except:
+            # 如果是初次授权　将openid加密　进入回调绑定页面
+            json_str = SecretOauth().dumps({'openid':openid})
+            # 显示绑定页面
+            context = {
+                'openid': json_str
+            }
+            return render(request, 'oauth_callback.html', context)
+        else:
+            # 如果不是初次授权 状态保持 转到相应界面
+            user = qquser.user
+            # 实现状态保持
+            login(request,user)
+            # 转到相关页面
+            response = redirect(reverse('contents:index'))
+            # 将用户名写入cookie
+            response.set_cookie('username',user.username,max_age=3600*15*24)
+            # 响应结果
+            return response
+
+
+
+    def post(self,request):
+
+        # 接收参数
+        mobile = request.POST.get('mobile')
+        password = request.POST.get('password')
+        sms_code = request.POST.get('sms_code')
+
+
+        # 校验参数
+        if not all([mobile,password,sms_code]):
+            return http.HttpResponseForbidden('缺少必传参数')
+        if not re.match(r'^1[3-9]\d{9}',mobile):
+            return http.HttpResponseForbidden('请输入正确的手机号码')
+        if not re.match(r'^[0-9a-zA-Z_]{8,20}',password):
+            return http.HttpResponseForbidden('请输入8-20位的密码')
+
+        # 验证短信验证码
+        redis_conn = get_redis_connection('sms_code')
+        redis_sms_code = redis_conn.get('sms_%s' % mobile)
+
+        if redis_sms_code is None:
+            return render(request, 'oauth_callback.html', {'sms_code_errmsg': '无效的短信验证码'})
+
+
+        if sms_code.lower() != redis_sms_code.decode().lower():
+            return render(request, 'oauth_callback.html', {'sms_code_errmsg': '输入短信验证码有误'})
+
+        # 取出openid
+        openid = request.POST.get('openid')
+        # 解密
+        openid_dict = SecretOauth().loads(openid)
+        openid = openid_dict.get('openid')
+
+        # 判断该手机号是否存在
+        try:
+            user = User.objects.get(mobile=mobile)
+        except:
+            # 如果不存在 则创建
+            user = User.objects.create_user(username=mobile,password=password,mobile=mobile)
+        else:
+            # 如果存在 则校验密码
+            if not user.check_password(password):
+                return http.HttpResponseForbidden('手机号已经存在或密码错误')
+        # 将用户和openid绑定
+        OAuthSinaUser.objects.create(
+            uid=openid,
+            user=user,
+        )
+
+        # 状态保持
+        login(request,user)
+
+        # 重定向到用户原先所在的位置页面
+        response = redirect(reverse('contents:index'))
+
+        # 将用户名写入cookie
+        response.set_cookie('username',user.username,max_age=3600*24*15)
+
+        # 响应结果
+        return response
+
+
+
+
+
+# 获取sina登录链接
+class WeiboAuthURLView(View):
+
+    def get(self,request):
+
+
+        # 创建sina链接对象
+        sina = sinaweibobopy3.APIClient(app_key=settings.APP_KEY,app_secret=settings.APP_SECRET,redirect_uri=settings.REDIRECT_URL)
+
+        # 生成sina登录链接
+        login_url = sina.get_authorize_url()
+
+        # 响应结果
+        return http.JsonResponse({'code': RETCODE.OK, 'errmsg': "OK", 'login_url': login_url})
 
 
 
 #　用户登录ＱＱ后的回调处理
-from utils.secret import SecretOauth
-
-
 class QQAuthUserView(View):
 
     def get(self,request):
@@ -127,6 +260,9 @@ class QQAuthUserView(View):
         response.set_cookie('username', user.username, max_age=3600 * 24 * 15)
 
         return response
+
+
+
 
 # 提供QQ登录页面的网址
 class QQAuthURLView(View):

@@ -52,10 +52,17 @@ INSTALLED_APPS = [
     'apps.goods',
     # 注册carts子应用
     'apps.carts',
+    # 注册orders子应用
+    'apps.orders',
+    # 注册payment子应用
+    'apps.payment',
 
+    # 注册django_crontab
+    'django_crontab', # 定时任务
 
     # 注册第三方Haystack
     'haystack',  # 全文检索
+
 ]
 
 MIDDLEWARE = [
@@ -189,7 +196,7 @@ CACHES = {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
     },
-        "verify_image_code": { #  # 保存图片验证码--10号库
+    "verify_image_code": { #  # 保存图片验证码--10号库
         "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": "redis://127.0.0.1:6379/10",
         "OPTIONS": {
@@ -292,7 +299,7 @@ EMAIL_ACTIVE_URL = 'http://www.meiduo.site:8000/emails/verification/' #激活地
 
 
 
-# qq登录参数
+# 配置qq登录参数
 QQ_CLIENT_ID = '101518219'
 QQ_CLIENT_SECRET = '418d84ebdc7241efb79536886ae95224'
 QQ_REDIRECT_URI = 'http://www.meiduo.site:8000/oauth_callback'
@@ -313,7 +320,7 @@ FDFS_BASE_URL = 'http://image.meiduo.site:8888/'
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
-        'URL': 'http://192.168.130.128:9200/', # Elasticsearch服务器ip地址，端口号固定为9200
+        'URL': 'http://192.168.119.128:9200/', # Elasticsearch服务器ip地址，端口号固定为9200
         'INDEX_NAME': 'meiduo', # Elasticsearch建立的索引库的名称
     },
 }
@@ -321,3 +328,25 @@ HAYSTACK_CONNECTIONS = {
 
 # 当添加、修改、删除数据时，自动生成索引
 HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
+
+# 配置支付宝SDK参数
+ALIPAY_APPID = '2016101400685212'
+ALIPAY_DEBUG = True
+ALIPAY_URL = 'https://openapi.alipaydev.com/gateway.do'
+ALIPAY_RETURN_URL = 'http://www.meiduo.site:8000/payment/status/'
+
+
+# # 配置首页静态文件定时任务
+# CRONJOBS = [
+#     # 每1分钟生成一次首页静态文件
+#     ('*/1 * * * *', 'apps.contents.crons.generate_static_index_html', '>> ' + os.path.join(BASE_DIR, 'logs/crontab.log'))
+# ]
+# # 定时任务中文
+# CRONTAB_COMMAND_PREFIX = 'LANG_ALL=zh_cn.UTF-8'
+
+
+# 配置微博登录参数
+APP_KEY = '3305669385'
+APP_SECRET= '74c7bea69d5fc64f5c3b80c802325276'
+REDIRECT_URL = 'http://www.meiduo.site:8000/sina_callback'
+

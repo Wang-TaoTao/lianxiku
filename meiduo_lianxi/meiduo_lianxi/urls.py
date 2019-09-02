@@ -26,6 +26,12 @@ urlpatterns = [
     # 配置carts路由
     url(r'^',include('apps.carts.urls',namespace= 'carts')),
 
+    # 配置orders路由
+    url(r'^',include('apps.orders.urls',namespace = 'orders')),
+
+    # 配置payment路由
+    url(r'^',include('apps.payment.urls',namespace = 'payment')),
+
     # 配置第三方Haystack路由
     url(r'^search/', include('haystack.urls')),
 

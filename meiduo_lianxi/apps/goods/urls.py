@@ -22,9 +22,14 @@ urlpatterns = [
     # 用户浏览记录
     url(r'^browse_histories/$',views.UserBrowseHistory.as_view()),
 
+    # 展示用户全部订单
+    url(r'^orders/info/(?P<page_num>\d+)/$',views.ShowAllOrderView.as_view()),
 
+    # 去评价
+    url(r'^orders/comment/$',views.CommentView.as_view()),
 
-
+    # 商品详情页展示商品评价详情
+    url(r'^comments/(?P<sku_id>\d+)/$',views.CommentDetailView.as_view()),
 
 
 

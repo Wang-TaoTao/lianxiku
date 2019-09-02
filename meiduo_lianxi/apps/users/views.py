@@ -18,6 +18,25 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 
+
+
+
+
+
+# 找回密码界面
+class FindPwdView(View):
+
+    def get(self,request):
+
+
+        # 渲染找回密码界面
+        return render(request,'find_password.html')
+
+
+
+
+
+
 # 展示收货地址
 class AddressView(LoginRequiredMixin,View):
 
@@ -149,7 +168,6 @@ class EmailView(LoginRequiredMixin,View):
 
 
 
-
 # 个人中心
 class UserInfoView(LoginRequiredMixin,View):
 
@@ -163,6 +181,7 @@ class UserInfoView(LoginRequiredMixin,View):
         }
 
         return render(request, 'user_center_info.html',context=context)
+
 
 
 

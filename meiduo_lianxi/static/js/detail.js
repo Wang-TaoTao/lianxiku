@@ -18,6 +18,7 @@ let vm = new Vue({
         cart_total_count: 0,
         carts: [],
         comments: [],
+        count:[],
         score_classes: {
             1: 'stars_one',
             2: 'stars_two',
@@ -26,6 +27,7 @@ let vm = new Vue({
             5: 'stars_five',
         },
     },
+
     mounted(){
 		// 获取热销商品数据
         this.get_hot_skus();
@@ -191,13 +193,14 @@ let vm = new Vue({
                     responseType: 'json'
                 })
                     .then(response => {
-                        this.comments = response.data.comment_list;
+                        this.comments = response.data.comments;
+                        this.count = response.data.count;
                         for(let i=0; i<this.comments.length; i++){
                             this.comments[i].score_class = this.score_classes[this.comments[i].score];
                         }
                     })
                     .catch(error => {
-                        console.log(error.response);
+                        // console.log(error.response);
                     });
             }
         },
