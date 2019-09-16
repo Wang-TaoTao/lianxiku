@@ -23,6 +23,9 @@ from libs.sina import sinaweibobopy3
 
 
 
+
+
+
 # 用户登录微博后的回调处理
 class WeiboAuthCallBackView(View):
 
@@ -130,7 +133,6 @@ class WeiboAuthCallBackView(View):
 
         # 响应结果
         return response
-
 
 
 
